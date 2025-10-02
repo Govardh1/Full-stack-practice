@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js"></script>
+
+	<title>Todo-Application</title>
+	<script>
+		async function signup() {
+			const username = document.getElementById('signup-username').value;
+			const password = document.getElementById('signup-password').value;
+			await axios.post("http://localhost:3000/signup", {
+				username,
+				password
+			})
+			alert("you are signed up")
+		}
+		async function signin() {
+			const username = document.getElementById('signin-username').value;
+			const password = document.getElementById('signin-password').value;
+			const Response = await axios.post("http://localhost:3000/signin", {
+				username: username,
+				password: password
+			})
+			localStorage.setItem("token", Response.data.token)
+			alert("you are signed in")
+		}
+		async function getinformation() {
+			const Response = await axios.get("http://localhost:3000/me", {
+				headers: {
+					token: localStorage.getItem("token")
+				}
+			})
+			document.getElementById("information").innerHTML = "username" + Response.data.username;
+		}
+		
+	</script>
+
+</head>
+
+<body>
+	<div>
+		signup:
+		<input id="signup-username" type="text" name="username" placeholder="enter you username">
+		<input id="signup-password" type="text" name="password" placeholder="enter you password">
+		<button onclick="signup()">submit </button>
+	</div>
+	<div>
+		signin:
+		<input id="signin-username" type="text" name="username" placeholder="enter you username">
+		<input id="signin-password" type="text" name="password" placeholder="enter you password">
+		<button onclick="signin()">submit </button>
+	</div>
+	<div>
+		user-information:
+		<div id="information"></div>
+   		 <button onclick="getinformation()">Get Info</button>
+	</div>
+	<div>
+		<button onclick="logout()">logOut</button>
+	</div>
+</body>
+
+</html>

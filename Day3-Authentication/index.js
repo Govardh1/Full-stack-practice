@@ -12,6 +12,9 @@ const users=[];
 // 	}
 // 	return token;
 // }
+app.get("/",(req,res)=>{
+	res.sendFile(__dirname+"/public/index.html")
+})
 app.post("/signup",(req,res)=>{
 	const username = req.body.username;
 	const password = req.body.password;
@@ -44,15 +47,27 @@ app.post("/signin",(req,res)=>{
 	}
 })
 
-app.get("/me",(req,res)=>{
+function auth(req,res,next){
 	const token=req.headers.token;
 	const userDetails = jwt.verify(token, JWT_SECRET);
-	const username=userDetails.username;
-	const user=users.find(user=>user.username===username)
-	console.log(user);
-	console.log(userDetails);
+	if(userDetails.username){
+		req.username=userDetails.username;
+		next();
+	}else{
+		res.json({
+			msg:"you are not logged in"
+		})
+	}
+}
+
+app.get("/me",auth,(req,res)=>{
 	
-	console.log(users);
+	const username=req.username;
+	const user=users.find(user=>user.username===username)
+	// console.log(user);
+	// console.log(userDetails);
+	
+	// console.log(users);
 	
 	
 	if(user){
